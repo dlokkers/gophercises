@@ -2,7 +2,12 @@
 
 package deck
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"sort"
+	"time"
+)
 
 // Suit of the card
 type Suit uint8
@@ -47,8 +52,8 @@ type Card struct {
 	Rank
 }
 
-// Cards represents a deck or cards+
-type Cards []Card
+// Deck represents a deck of multiple cards
+type Deck []Card
 
 func (c Card) String() string {
 	if c.Suit == Joker {
@@ -59,8 +64,8 @@ func (c Card) String() string {
 
 // New creates a new deck of cards, including set of optional
 // parameters
-func New() []Card {
-	var cards []Card
+func New(opts ...func(Deck) Deck) Deck {
+	var cards Deck
 
 	for _, s := range suits {
 		for _, r := range ranks {
@@ -68,21 +73,43 @@ func New() []Card {
 		}
 	}
 
+	for _, opt := range opts {
+		cards = opt(cards)
+	}
+
 	return cards
 }
 
 // Len defines the size of the deck, to implement Sort
-func (c Cards) Len() int {
-	return len(c)
+func (d Deck) Len() int {
+	return len(d)
 }
 
 // Swap defines a means to swap cards for sorting purposes
-func (c Cards) Swap(i, j int) {
-	c[i], c[j] = c[j], c[i]
+func (d Deck) Swap(i, j int) {
+	d[i], d[j] = d[j], d[i]
 }
 
 // Less defines an ordering in cards for sorting purposes
-func (c Cards) Less(i, j int) bool {
-	return int(c[i].Suit)*len(ranks)+int(c[j].Rank) <
-		int(c[j].Suit)*len(ranks)+int(c[j].Rank)
+func (d Deck) Less(i, j int) bool {
+	return int(d[i].Suit)*len(ranks)+int(d[j].Rank) <
+		int(d[j].Suit)*len(ranks)+int(d[j].Rank)
+}
+
+// DefaultSort implements a default sorting for the deck
+func DefaultSort(d Deck) Deck {
+	sort.Sort(d)
+	return d
+}
+
+// DefaultShuffle offers a build in shuffle method to use on the deck
+func DefaultShuffle(d Deck) Deck {
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	ret := make(Deck, len(d))
+	perm := r.Perm(len(d))
+
+	for i, randIndex := range perm {
+		ret[i] = d[randIndex]
+	}
+	return ret
 }
