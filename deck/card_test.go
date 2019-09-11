@@ -49,4 +49,11 @@ func TestNew(t *testing.T) {
 	if (deck[0] != Card{Suit: Spade, Rank: Ace}) {
 		t.Errorf("Wrong first card: %s", deck[0])
 	}
+
+	deck = New(AddJokers(3))
+	expected = 13*4 + 3
+	got = len(deck)
+	if expected != got {
+		t.Errorf("Wrong number of cards in new deck. Expected: %d - Got: %d.", expected, got)
+	}
 }

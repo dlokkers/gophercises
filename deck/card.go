@@ -113,3 +113,13 @@ func DefaultShuffle(d Deck) Deck {
 	}
 	return ret
 }
+
+// AddJokers adds a joker to the Deck
+func AddJokers(n int) func(Deck) Deck {
+	return func(d Deck) Deck {
+		for i := 0; i < n; i++ {
+			d = append(d, Card{Suit: Joker})
+		}
+		return d
+	}
+}
