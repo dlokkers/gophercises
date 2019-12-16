@@ -123,3 +123,12 @@ func AddJokers(n int) func(Deck) Deck {
 		return d
 	}
 }
+
+// Draw returns and removes the first card in the deck
+func (d *Deck) Draw() Card {
+	var c Card
+
+	c, *d = (*d)[0], (*d)[1:]
+
+	return c
+}
