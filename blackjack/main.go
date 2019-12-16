@@ -6,13 +6,14 @@ import (
 	"github.com/dlokkers/gophercises/deck"
 )
 
-type hand []deck.Card
+// Hand represents the players or the dealers hand
+type Hand []deck.Card
 
 func main() {
 	cards := deck.New(deck.DefaultShuffle)
 
-	var playerHand hand
-	var dealerHand hand
+	var playerHand Hand
+	var dealerHand Hand
 
 	for i := 0; i < 2; i++ {
 		playerHand = append(playerHand, cards.Draw())
@@ -31,7 +32,7 @@ func main() {
 	}
 }
 
-func (h hand) String() string {
+func (h Hand) String() string {
 	hand := ""
 	for _, c := range h {
 		hand = hand + fmt.Sprintln(c)
@@ -42,7 +43,7 @@ func (h hand) String() string {
 }
 
 // value returns the total value of the cards in hand
-func (h hand) value() uint8 {
+func (h Hand) value() uint8 {
 	var total uint8
 	aces := 0
 
