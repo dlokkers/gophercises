@@ -50,12 +50,25 @@ var ranks = [...]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten,
 type Card struct {
 	Suit
 	Rank
+	Face
 }
+
+// Face describes if a card is facing up or down
+type Face uint8
+
+// Describing the states a card can be in
+const (
+	Up Face = iota
+	Down
+)
 
 // Deck represents a deck of multiple cards
 type Deck []Card
 
 func (c Card) String() string {
+	if c.Face == Down {
+		return "******"
+	}
 	if c.Suit == Joker {
 		return "Joker"
 	}
@@ -69,7 +82,7 @@ func New(opts ...func(Deck) Deck) Deck {
 
 	for _, s := range suits {
 		for _, r := range ranks {
-			cards = append(cards, Card{s, r})
+			cards = append(cards, Card{s, r, Down})
 		}
 	}
 
@@ -78,6 +91,15 @@ func New(opts ...func(Deck) Deck) Deck {
 	}
 
 	return cards
+}
+
+// Flip flips the card over
+func (c *Card) Flip() {
+	if c.Face == Up {
+		c.Face = Down
+	} else {
+		c.Face = Up
+	}
 }
 
 // Len defines the size of the deck, to implement Sort
@@ -125,10 +147,11 @@ func AddJokers(n int) func(Deck) Deck {
 }
 
 // Draw returns and removes the first card in the deck
-func (d *Deck) Draw() Card {
+func (d *Deck) Draw(f Face) Card {
 	var c Card
 
 	c, *d = (*d)[0], (*d)[1:]
+	c.Face = f
 
 	return c
 }
