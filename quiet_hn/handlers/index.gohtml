@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Quiet HackerNews</title>
+    </head>
+    <body>
+        <ol>
+            {{range .Items}}
+                <li><a href="{{.URL}}">{{.Title}}</a></li>
+            {{end}}
+        </ol>
+        <p>Time Taken: {{.Time}}</p>
+    </body>
+</html>

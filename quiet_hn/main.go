@@ -1,30 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
 
-	"github.com/dlokkers/gophercises/quiet_hn/hnapi"
+	"github.com/dlokkers/gophercises/quiet_hn/handlers"
 )
 
 func main() {
-	var c hnapi.Client
-	topItems, err := c.GetTopItems()
-	if err != nil {
-		panic(err)
-	}
-	count := 0
-	for _, id := range topItems {
-		item, err := c.GetItem(id)
-		if err != nil {
-			panic(err)
-		}
-		if item.IsStory() {
-			count++
-			fmt.Printf("%d. %s\n", count, item.Title)
-			fmt.Printf("-- %s\n", item.URL)
-		}
-		if count >= 30 {
-			break
-		}
-	}
+	http.HandleFunc("/", handlers.ShowStories())
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
