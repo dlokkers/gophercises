@@ -15,7 +15,7 @@ func main() {
 	var port, numStories, interval int
 	flag.IntVar(&port, "port", 8080, "The port to start the web server on")
 	flag.IntVar(&numStories, "num_stories", 30, "The number of top stories to display")
-	flag.IntVar(&interval, "interval", 5, "The number of minutes between cache refreshes")
+	flag.IntVar(&interval, "interval", 15, "The number of minutes between cache refreshes")
 	flag.Parse()
 
 	var cache hnapi.Cache
