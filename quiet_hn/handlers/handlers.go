@@ -9,40 +9,26 @@ import (
 )
 
 type templateData struct {
-	Items []hnapi.Item
-	Time  time.Duration
+	Items      []hnapi.Item
+	Time       time.Duration
+	LastUpdate string
 }
 
 // ShowStories will load the top 30 stories to display
-func ShowStories() http.HandlerFunc {
+func ShowStories(c *hnapi.Cache) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tpl := template.Must(template.ParseFiles("handlers/index.html"))
-
-		var c hnapi.Client
-		topItems, err := c.GetTopItems()
-		if err != nil {
-			http.Error(w, "Failed to load top stories", http.StatusInternalServerError)
-			return
-		}
-
-		var items []hnapi.Item
+		tpl := template.Must(template.ParseFiles("handlers/index.gohtml"))
 		start := time.Now()
-
-		i := make(chan hnapi.Item)
-		for _, id := range topItems {
-			go retrieveStory(c, id, i)
-		}
-		for len(items) < 30 {
-			items = append(items, <-i)
-		}
-
+		items := c.Items
 		elapsed := time.Now().Sub(start)
 
 		templateData := templateData{
-			Items: items,
-			Time:  elapsed,
+			Items:      items,
+			Time:       elapsed,
+			LastUpdate: c.LastUpdate.Format("Mon Jan _2 15:04:05 2006"),
 		}
-		err = tpl.Execute(w, templateData)
+
+		_ = tpl.Execute(w, templateData)
 	})
 }
 
