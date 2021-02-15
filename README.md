@@ -11,3 +11,6 @@ Current completion:
 7. CLI Task Manager
 8. Phone number normalizer
 9. Deck of Cards
+10. Blackjack
+11. Quiet HN
+12. 
