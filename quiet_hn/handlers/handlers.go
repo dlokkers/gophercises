@@ -19,7 +19,9 @@ func ShowStories(c *hnapi.Cache) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tpl := template.Must(template.ParseFiles("handlers/index.gohtml"))
 		start := time.Now()
+		c.Mutex.Lock()
 		items := c.Items
+		c.Mutex.Unlock()
 		elapsed := time.Now().Sub(start)
 
 		templateData := templateData{

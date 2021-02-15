@@ -2,6 +2,7 @@ package hnapi
 
 import (
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -10,6 +11,7 @@ type Cache struct {
 	Items      []Item
 	Error      error
 	LastUpdate time.Time
+	Mutex      sync.Mutex
 }
 
 // Refresh refreshes the cache ever interval using client c
@@ -56,13 +58,13 @@ func (ch *Cache) Refresh(c Client, size int, interval time.Duration) {
 		sort.Slice(retrievedItems, func(i, j int) bool {
 			return retrievedItems[i].Index < retrievedItems[j].Index
 		})
-
+		ch.Mutex.Lock()
 		ch.Items = nil
 		for _, ret := range retrievedItems {
 			ch.Items = append(ch.Items, ret.Item)
 		}
 		ch.LastUpdate = time.Now()
-
+		ch.Mutex.Unlock()
 		time.Sleep(interval)
 	}
 }
